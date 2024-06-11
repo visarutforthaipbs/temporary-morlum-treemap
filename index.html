@@ -12,6 +12,13 @@
         body {
             font-family: "IBM Plex Sans Thai", sans-serif;
             font-size: 16px;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f9f9f9;
         }
 
         .node {
@@ -21,7 +28,7 @@
             text-indent: 2px;
             cursor: default;
             font-family: "IBM Plex Sans Thai", sans-serif;
-            font-weight: semibold;
+            font-weight: 600;
         }
 
         .toolTip {
@@ -29,18 +36,22 @@
             display: none;
             width: auto;
             height: auto;
-            background: none repeat scroll 0 0 white;
-            border: 0 none;
+            background: white;
             border-radius: 8px;
             box-shadow: -3px 3px 15px #888888;
             color: black;
             font: 12px sans-serif;
             padding: 5px;
             text-align: center;
+            pointer-events: none;
         }
 
         .node text {
             pointer-events: none;
+        }
+
+        svg {
+            border: 1px solid #ccc;
         }
     </style>
 </head>
@@ -74,9 +85,11 @@
             return +(Math.round(num + "e+2") + "e-2");
         }
 
-        d3.json("treemap-data.json").then(function (data) {
+        d3.json("data/treemap-data-json").then(function (data) {
             var root = d3.hierarchy(data)
-                .eachBefore(function (d) { d.data.id = (d.parent ? d.parent.data.id + "." : "") + d.data.name; })
+                .eachBefore(function (d) {
+                    d.data.id = (d.parent ? d.parent.data.id + "." : "") + d.data.name;
+                })
                 .sum(function (d) { return d.size; })
                 .sort(function (a, b) { return b.height - a.height || b.value - a.value; });
 
@@ -114,7 +127,6 @@
                 .attr("dy", "0.35em")
                 .text(function (d) {
                     var boxWidth = d.x1 - d.x0;
-                    var textLength = d.data.name.length;
                     var charsToShow = Math.floor(boxWidth / 8); // Approx. 8 pixels per character
                     return d.data.name.length > charsToShow ? d.data.name.substring(0, charsToShow) + "..." : d.data.name;
                 });
